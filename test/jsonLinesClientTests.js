@@ -80,6 +80,20 @@ suite('jsonLinesClient', function () {
     done();
   });
 
+  test('emits an error if the request fails.', function (done) {
+    jsonLinesClient({
+      protocol: 'http',
+      host: 'localhost-xxx',
+      port: 3000,
+      path: '/'
+    }, function (server) {
+      server.stream.once('error', function (err) {
+        assert.that(err).is.not.null();
+        done();
+      });
+    });
+  });
+
   test('emits an error if the server returns an error.', function (done) {
     jsonLinesClient({
       protocol: 'http',

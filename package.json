@@ -1,6 +1,6 @@
 {
   "name": "json-lines-client",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "json-lines-client makes parsing JSON lines streams a breeze.",
   "contributors": [
     {

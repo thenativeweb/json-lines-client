@@ -12,6 +12,24 @@ suite('jsonLinesClient', function () {
   suiteSetup(function () {
     var app = express();
 
+    app.get('/with-query', jsonLines(function (client) {
+      var result = false;
+
+      client.once('open', function () {
+        if (
+          (client.req.query.foo === '42') &&
+          (client.req.query.bar === 'baz') &&
+          (client.req.query.bas.key === 'value') &&
+          (typeof client.req.query._ !== '')
+        ) {
+          result = true;
+        }
+
+        client.send({ result: result });
+        client.close();
+      });
+    }));
+
     app.get('/finite', jsonLines(function (client) {
       var counter = 0,
           timer;
@@ -200,6 +218,30 @@ suite('jsonLinesClient', function () {
           assert.that(infiniteStream.listeners('end').length).is.equalTo(0);
           done();
         });
+      });
+    });
+  });
+
+  test('sends query parameters.', function (done) {
+    jsonLinesClient({
+      protocol: 'http',
+      host: 'localhost',
+      port: 3000,
+      path: '/with-query',
+      query: {
+        foo: 42,
+        bar: 'baz',
+        bas: {
+          key: 'value'
+        }
+      }
+    }, function (finiteStream) {
+      finiteStream.once('data', function (data) {
+        assert.that(data.result).is.true();
+      });
+
+      finiteStream.once('end', function () {
+        done();
       });
     });
   });

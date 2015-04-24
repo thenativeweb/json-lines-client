@@ -21,7 +21,10 @@ client({
   protocol: 'http',
   host: 'localhost',
   port: 3000,
-  path: '/events'
+  path: '/events',
+  query: {
+    foo: 'bar'
+  }
 }, function (stream) {
   stream.on('data', function (data) {
     // ...

@@ -15,7 +15,8 @@
   "main": "lib/jsonLinesClient.js",
   "dependencies": {
     "defekt": "0.0.2",
-    "newline-json": "0.1.1"
+    "newline-json": "0.1.1",
+    "qs": "2.4.1"
   },
   "devDependencies": {
     "assertthat": "0.6.0",

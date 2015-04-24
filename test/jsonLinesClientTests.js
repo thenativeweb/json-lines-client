@@ -90,7 +90,7 @@ suite('jsonLinesClient', function () {
       finiteStream.once('error', function (err) {
         assert.that(err).is.not.null();
         assert.that(err.name).is.equalTo('UnexpectedStatusCode');
-        assert.that(err.message).is.equalTo('Unexpected status code 404.');
+        assert.that(/^Cannot GET \/non-existent\?_\=\d+/g.test(err.message)).is.true();
         done();
       });
     });

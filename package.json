@@ -1,0 +1,37 @@
+{
+  "name": "json-lines-client",
+  "version": "0.1.0",
+  "description": "json-lines-client makes parsing JSON lines streams a breeze.",
+  "contributors": [
+    {
+      "name": "Golo Roden",
+      "email": "golo.roden@thenativeweb.io"
+    },
+    {
+      "name": "Matthias Wagler",
+      "email": "matthias.wagler@thenativeweb.io"
+    }
+  ],
+  "main": "lib/jsonLinesClient.js",
+  "dependencies": {
+    "newline-json": "0.1.1"
+  },
+  "devDependencies": {
+    "assertthat": "0.6.0",
+    "express": "4.12.3",
+    "grunt": "0.4.5",
+    "json-lines": "0.2.0",
+    "tourism": "0.16.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/thenativeweb/json-lines-client.git"
+  },
+  "keywords": [
+    "json",
+    "json-lines",
+    "parser",
+    "stream"
+  ],
+  "license": "MIT"
+}

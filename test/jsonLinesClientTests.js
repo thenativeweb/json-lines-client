@@ -20,7 +20,7 @@ suite('jsonLinesClient', function () {
           (client.req.query.foo === '42') &&
           (client.req.query.bar === 'baz') &&
           (client.req.query.bas.key === 'value') &&
-          (typeof client.req.query._ !== '')
+          (client.req.query._ !== '')
         ) {
           result = true;
         }

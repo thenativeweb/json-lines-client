@@ -42,12 +42,81 @@ suite('jsonLinesClient', function () {
       });
     }));
 
+    app.get('/flaky-json', function (req, res) {
+      res.writeHead(200, {
+        'content-type': 'application/json'
+      });
+
+      res.write(JSON.stringify({ foo: 'bar' }) + '\n');
+      res.write(JSON.stringify({ foo: 'baz' }) + '\n');
+      res.write('boom\n');
+      res.write(JSON.stringify({ foo: 'bas' }) + '\n');
+      res.end();
+    });
+
     http.createServer(app).listen(3000);
   });
 
   test('is a function.', function (done) {
     assert.that(jsonLinesClient).is.ofType('function');
     done();
+  });
+
+  test('emits an error if the server returns an error.', function (done) {
+    jsonLinesClient({
+      protocol: 'http',
+      host: 'localhost',
+      port: 3000,
+      path: '/non-existent'
+    }, function (finiteStream) {
+      finiteStream.once('error', function (err) {
+        assert.that(err).is.not.null();
+        assert.that(err.name).is.equalTo('UnexpectedStatusCode');
+        assert.that(err.message).is.equalTo('Unexpected status code 404.');
+        done();
+      });
+    });
+  });
+
+  test('handles parser errors gracefully.', function (done) {
+    jsonLinesClient({
+      protocol: 'http',
+      host: 'localhost',
+      port: 3000,
+      path: '/flaky-json'
+    }, function (finiteStream) {
+      finiteStream.on('data', function () {
+        // Intentionally left blank...
+      });
+
+      finiteStream.once('error', function (err) {
+        assert.that(err).is.not.null();
+        assert.that(err.name).is.equalTo('InvalidJson');
+        assert.that(err.message).is.equalTo('Could not parse JSON.');
+        done();
+      });
+    });
+  });
+
+  test('removes any event listeners on a parser error.', function (done) {
+    jsonLinesClient({
+      protocol: 'http',
+      host: 'localhost',
+      port: 3000,
+      path: '/flaky-json'
+    }, function (finiteStream) {
+      finiteStream.on('data', function () {
+        // Intentionally left blank...
+      });
+
+      finiteStream.once('error', function () {
+        process.nextTick(function () {
+          assert.that(finiteStream.listeners('data').length).is.equalTo(0);
+          assert.that(finiteStream.listeners('end').length).is.equalTo(0);
+          done();
+        });
+      });
+    });
   });
 
   test('parses a finite stream.', function (done) {

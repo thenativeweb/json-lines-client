@@ -41,6 +41,18 @@ stream.end();
 
 Either way, json-lines-client will take care of removing any event listeners from the streams created.
 
+### Handling errors
+
+To handle errors subscribe to the `error` event. Then you can use the error's `name` property to find out about the type of the error.
+
+```javascript
+stream.once('error', function (err) {
+  // ...
+});
+```
+
+The most commonly appearing error types are `InvalidJson` and `UnexpectedStatusCode`, so make sure to handle at least these two.
+
 ## Running the build
 
 This module can be built using [Grunt](http://gruntjs.com/). Besides running the tests, this also analyses the code. To run Grunt, go to the folder where you have installed json-lines-client and run `grunt`. You need to have [grunt-cli](https://github.com/gruntjs/grunt-cli) installed.

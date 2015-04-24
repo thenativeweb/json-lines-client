@@ -25,21 +25,21 @@ client({
   query: {
     foo: 'bar'
   }
-}, function (stream) {
-  stream.on('data', function (data) {
+}, function (server) {
+  server.stream.on('data', function (data) {
     // ...
   });
 
-  stream.on('end', function () {
+  server.stream.on('end', function () {
     // ...
   });
 });
 ```
 
-If you want to cancel receiving a stream from the client, call the stream's `end` function.
+If you want to cancel receiving a stream from the client, call the stream's `disconnect` function.
 
 ```javascript
-stream.end();
+server.stream.disconnect();
 ```
 
 Either way, json-lines-client will take care of removing any event listeners from the streams created.
@@ -49,7 +49,7 @@ Either way, json-lines-client will take care of removing any event listeners fro
 To handle errors subscribe to the `error` event. Then you can use the error's `name` property to find out about the type of the error.
 
 ```javascript
-stream.once('error', function (err) {
+server.stream.once('error', function (err) {
   // ...
 });
 ```

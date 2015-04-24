@@ -15,7 +15,7 @@ suite('jsonLinesClient', function () {
     app.get('/with-query', jsonLines(function (client) {
       var result = false;
 
-      client.once('open', function () {
+      client.once('connect', function () {
         if (
           (client.req.query.foo === '42') &&
           (client.req.query.bar === 'baz') &&
@@ -26,7 +26,7 @@ suite('jsonLinesClient', function () {
         }
 
         client.send({ result: result });
-        client.close();
+        client.disconnect();
       });
     }));
 
@@ -34,12 +34,12 @@ suite('jsonLinesClient', function () {
       var counter = 0,
           timer;
 
-      client.once('open', function () {
+      client.once('connect', function () {
         timer = setInterval(function () {
           client.send({ counter: counter++ });
           if (counter === 10) {
             clearInterval(timer);
-            client.close();
+            client.disconnect();
           }
         }, 100);
       });
@@ -49,13 +49,13 @@ suite('jsonLinesClient', function () {
       var counter = 0,
           timer;
 
-      client.once('open', function () {
+      client.once('connect', function () {
         timer = setInterval(function () {
           client.send({ counter: counter++ });
         }, 100);
       });
 
-      client.once('close', function () {
+      client.once('disconnect', function () {
         clearInterval(timer);
       });
     }));
@@ -86,8 +86,8 @@ suite('jsonLinesClient', function () {
       host: 'localhost',
       port: 3000,
       path: '/non-existent'
-    }, function (finiteStream) {
-      finiteStream.once('error', function (err) {
+    }, function (server) {
+      server.stream.once('error', function (err) {
         assert.that(err).is.not.null();
         assert.that(err.name).is.equalTo('UnexpectedStatusCode');
         assert.that(/^Cannot GET \/non-existent\?_\=\d+/g.test(err.message)).is.true();
@@ -102,12 +102,12 @@ suite('jsonLinesClient', function () {
       host: 'localhost',
       port: 3000,
       path: '/flaky-json'
-    }, function (finiteStream) {
-      finiteStream.on('data', function () {
+    }, function (server) {
+      server.stream.on('data', function () {
         // Intentionally left blank...
       });
 
-      finiteStream.once('error', function (err) {
+      server.stream.once('error', function (err) {
         assert.that(err).is.not.null();
         assert.that(err.name).is.equalTo('InvalidJson');
         assert.that(err.message).is.equalTo('Could not parse JSON.');
@@ -122,15 +122,15 @@ suite('jsonLinesClient', function () {
       host: 'localhost',
       port: 3000,
       path: '/flaky-json'
-    }, function (finiteStream) {
-      finiteStream.on('data', function () {
+    }, function (server) {
+      server.stream.on('data', function () {
         // Intentionally left blank...
       });
 
-      finiteStream.once('error', function () {
+      server.stream.once('error', function () {
         process.nextTick(function () {
-          assert.that(finiteStream.listeners('data').length).is.equalTo(0);
-          assert.that(finiteStream.listeners('end').length).is.equalTo(0);
+          assert.that(server.stream.listeners('data').length).is.equalTo(0);
+          assert.that(server.stream.listeners('end').length).is.equalTo(0);
           done();
         });
       });
@@ -143,15 +143,15 @@ suite('jsonLinesClient', function () {
       host: 'localhost',
       port: 3000,
       path: '/finite'
-    }, function (finiteStream) {
+    }, function (server) {
       var resultCount = 0;
 
-      finiteStream.on('data', function (data) {
+      server.stream.on('data', function (data) {
         assert.that(data.counter).is.between(0, 9);
         resultCount++;
       });
 
-      finiteStream.once('end', function () {
+      server.stream.once('end', function () {
         assert.that(resultCount).is.equalTo(10);
         done();
       });
@@ -164,15 +164,15 @@ suite('jsonLinesClient', function () {
       host: 'localhost',
       port: 3000,
       path: '/finite'
-    }, function (finiteStream) {
-      finiteStream.on('data', function () {
+    }, function (server) {
+      server.stream.on('data', function () {
         // Intentionally left blank...
       });
 
-      finiteStream.once('end', function () {
+      server.stream.once('end', function () {
         process.nextTick(function () {
-          assert.that(finiteStream.listeners('data').length).is.equalTo(0);
-          assert.that(finiteStream.listeners('end').length).is.equalTo(0);
+          assert.that(server.stream.listeners('data').length).is.equalTo(0);
+          assert.that(server.stream.listeners('end').length).is.equalTo(0);
           done();
         });
       });
@@ -185,15 +185,15 @@ suite('jsonLinesClient', function () {
       host: 'localhost',
       port: 3000,
       path: '/infinite'
-    }, function (infiniteStream) {
-      infiniteStream.on('data', function (data) {
+    }, function (server) {
+      server.stream.on('data', function (data) {
         assert.that(data.counter).is.between(0, 9);
         if (data.counter === 9) {
-          infiniteStream.end();
+          server.disconnect();
         }
       });
 
-      infiniteStream.once('end', function () {
+      server.stream.once('end', function () {
         done();
       });
     });
@@ -205,17 +205,17 @@ suite('jsonLinesClient', function () {
       host: 'localhost',
       port: 3000,
       path: '/infinite'
-    }, function (infiniteStream) {
-      infiniteStream.on('data', function () {
+    }, function (server) {
+      server.stream.on('data', function () {
         setTimeout(function () {
-          infiniteStream.end();
+          server.disconnect();
         }, 1000);
       });
 
-      infiniteStream.once('end', function () {
+      server.stream.once('end', function () {
         process.nextTick(function () {
-          assert.that(infiniteStream.listeners('data').length).is.equalTo(0);
-          assert.that(infiniteStream.listeners('end').length).is.equalTo(0);
+          assert.that(server.stream.listeners('data').length).is.equalTo(0);
+          assert.that(server.stream.listeners('end').length).is.equalTo(0);
           done();
         });
       });
@@ -235,12 +235,12 @@ suite('jsonLinesClient', function () {
           key: 'value'
         }
       }
-    }, function (finiteStream) {
-      finiteStream.once('data', function (data) {
+    }, function (server) {
+      server.stream.once('data', function (data) {
         assert.that(data.result).is.true();
       });
 
-      finiteStream.once('end', function () {
+      server.stream.once('end', function () {
         done();
       });
     });

@@ -22,7 +22,7 @@
     "assertthat": "0.6.0",
     "express": "4.12.3",
     "grunt": "0.4.5",
-    "json-lines": "0.2.0",
+    "json-lines": "0.3.0",
     "tourism": "0.16.1"
   },
   "repository": {

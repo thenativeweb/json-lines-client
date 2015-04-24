@@ -78,7 +78,7 @@ suite('jsonLinesClient', function () {
       port: 3000,
       path: '/finite'
     }, function (finiteStream) {
-      finiteStream.on('data', function (data) {
+      finiteStream.on('data', function () {
         // Intentionally left blank...
       });
 
@@ -119,7 +119,7 @@ suite('jsonLinesClient', function () {
       port: 3000,
       path: '/infinite'
     }, function (infiniteStream) {
-      infiniteStream.on('data', function (data) {
+      infiniteStream.on('data', function () {
         setTimeout(function () {
           infiniteStream.end();
         }, 1000);

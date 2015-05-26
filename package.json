@@ -19,7 +19,7 @@
   },
   "dependencies": {
     "defekt": "0.0.2",
-    "http-browserify-2": "0.2.0",
+    "http-browserify-2": "0.2.1",
     "newline-json": "0.1.1",
     "qs": "3.0.0"
   },

@@ -16,14 +16,14 @@
   "dependencies": {
     "defekt": "0.0.2",
     "newline-json": "0.1.1",
-    "qs": "2.4.1"
+    "qs": "3.0.0"
   },
   "devDependencies": {
     "assertthat": "0.6.0",
-    "express": "4.12.3",
+    "express": "4.12.4",
     "grunt": "0.4.5",
     "json-lines": "0.3.0",
-    "tourism": "0.16.1"
+    "tourism": "0.19.0"
   },
   "repository": {
     "type": "git",

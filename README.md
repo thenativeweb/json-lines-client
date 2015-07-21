@@ -56,6 +56,32 @@ server.stream.once('error', function (err) {
 
 The most commonly appearing error types are `InvalidJson` and `UnexpectedStatusCode`, so make sure to handle at least these two.
 
+### Sending a request body
+
+From time to time you may want to send a request body along with your request, e.g. to send a configuration object to the server.
+
+For this use the `body` property and specify an object that you want to send.
+
+```javascript
+client({
+  protocol: 'http',
+  host: 'localhost',
+  port: 3000,
+  path: '/events',
+  body: {
+    foo: 'bar'
+  }
+}, function (server) {
+  // ...
+});
+```
+
+### Using the server module
+
+To create to a json-lines enabled server, use the [json-lines](https://www.npmjs.com/package/json-lines) module.
+
+**Please note that json-lines-client 0.6.0 is not backwards-compatible. You must use [json-lines](https://www.npmjs.com/package/json-lines) 0.4.0 or higher.**
+
 ## Running the build
 
 This module can be built using [Grunt](http://gruntjs.com/). Besides running the tests, this also analyses the code. To run Grunt, go to the folder where you have installed json-lines-client and run `grunt`. You need to have [grunt-cli](https://github.com/gruntjs/grunt-cli) installed.

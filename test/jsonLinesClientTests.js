@@ -3,6 +3,7 @@
 var http = require('http');
 
 var assert = require('assertthat'),
+    bodyParser = require('body-parser'),
     express = require('express'),
     jsonLines = require('json-lines');
 
@@ -11,6 +12,15 @@ var jsonLinesClient = require('../lib/jsonLinesClient');
 suite('jsonLinesClient', function () {
   suiteSetup(function () {
     var app = express();
+
+    app.use(bodyParser.json());
+
+    app.post('/echo-body', jsonLines(function (client) {
+      client.once('connect', function () {
+        client.send(client.req.body);
+        client.disconnect();
+      });
+    }));
 
     app.post('/with-query', jsonLines(function (client) {
       var result = false;
@@ -147,6 +157,28 @@ suite('jsonLinesClient', function () {
           assert.that(server.stream.listeners('end').length).is.equalTo(0);
           done();
         });
+      });
+    });
+  });
+
+  test('sends a request body.', function (done) {
+    jsonLinesClient({
+      protocol: 'http',
+      host: 'localhost',
+      port: 3000,
+      path: '/echo-body',
+      body: {
+        foo: 'bar'
+      }
+    }, function (server) {
+      server.stream.once('data', function (data) {
+        assert.that(data).is.equalTo({
+          foo: 'bar'
+        });
+      });
+
+      server.stream.once('end', function () {
+        done();
       });
     });
   });

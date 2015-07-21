@@ -114,7 +114,7 @@ suite('jsonLinesClient', function () {
       server.stream.once('error', function (err) {
         assert.that(err).is.not.null();
         assert.that(err.name).is.equalTo('UnexpectedStatusCode');
-        assert.that(/^Cannot POST \/non-existent\?_\=\d+/g.test(err.message)).is.true();
+        assert.that(err.message).is.equalTo('Cannot POST /non-existent\n');
         done();
       });
     });

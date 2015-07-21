@@ -12,7 +12,7 @@ suite('jsonLinesClient', function () {
   suiteSetup(function () {
     var app = express();
 
-    app.get('/with-query', jsonLines(function (client) {
+    app.post('/with-query', jsonLines(function (client) {
       var result = false;
 
       client.once('connect', function () {
@@ -30,7 +30,7 @@ suite('jsonLinesClient', function () {
       });
     }));
 
-    app.get('/finite', jsonLines(function (client) {
+    app.post('/finite', jsonLines(function (client) {
       var counter = 0,
           timer;
 
@@ -45,7 +45,7 @@ suite('jsonLinesClient', function () {
       });
     }));
 
-    app.get('/infinite', jsonLines(function (client) {
+    app.post('/infinite', jsonLines(function (client) {
       var counter = 0,
           timer;
 
@@ -60,7 +60,7 @@ suite('jsonLinesClient', function () {
       });
     }));
 
-    app.get('/flaky-json', function (req, res) {
+    app.post('/flaky-json', function (req, res) {
       res.writeHead(200, {
         'content-type': 'application/json'
       });
@@ -104,7 +104,7 @@ suite('jsonLinesClient', function () {
       server.stream.once('error', function (err) {
         assert.that(err).is.not.null();
         assert.that(err.name).is.equalTo('UnexpectedStatusCode');
-        assert.that(/^Cannot GET \/non-existent\?_\=\d+/g.test(err.message)).is.true();
+        assert.that(/^Cannot POST \/non-existent\?_\=\d+/g.test(err.message)).is.true();
         done();
       });
     });

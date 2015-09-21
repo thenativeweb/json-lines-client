@@ -22,6 +22,14 @@ suite('jsonLinesClient', function () {
       });
     }));
 
+    app.post('/with-custom-headers', function (req, res) {
+      res.writeHead(200, {
+        'content-type': 'application/json'
+      });
+      res.write(JSON.stringify(req.headers) + '\n');
+      res.end();
+    });
+
     app.post('/with-query', jsonLines(function (client) {
       var result = false;
 
@@ -284,6 +292,32 @@ suite('jsonLinesClient', function () {
     }, function (server) {
       server.stream.once('data', function (data) {
         assert.that(data.result).is.true();
+      });
+
+      server.stream.once('end', function () {
+        done();
+      });
+    });
+  });
+
+  test('sends custom headers.', function (done) {
+    jsonLinesClient({
+      protocol: 'http',
+      host: 'localhost',
+      port: 3000,
+      path: '/with-custom-headers',
+      headers: {
+        foo: 'bar'
+      }
+    }, function (server) {
+      server.stream.once('data', function (data) {
+        assert.that(data).is.equalTo({
+          foo: 'bar',
+          'content-type': 'application/json',
+          host: 'localhost:3000',
+          connection: 'close',
+          'transfer-encoding': 'chunked'
+        });
       });
 
       server.stream.once('end', function () {

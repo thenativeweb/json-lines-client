@@ -24,6 +24,9 @@ client({
   path: '/events',
   query: {
     foo: 'bar'
+  },
+  headers: {
+    authoritization: 'Bearer ' + token
   }
 }, function (server) {
   server.stream.on('data', function (data) {
@@ -35,6 +38,8 @@ client({
   });
 });
 ```
+
+*Please note that you can not overrid the `content-type` header in this way, as this header is being set internally by json-lines-client.*
 
 If you want to cancel receiving a stream from the client, call the stream's `disconnect` function.
 

@@ -316,7 +316,7 @@ suite('jsonLinesClient', function () {
           'content-type': 'application/json',
           host: 'localhost:3000',
           connection: 'close',
-          'transfer-encoding': 'chunked'
+          'content-length': '0'
         });
       });
 

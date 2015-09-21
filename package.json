@@ -21,15 +21,15 @@
     "defekt": "0.0.2",
     "http-browserify-2": "0.4.1",
     "newline-json": "0.1.1",
-    "qs": "4.0.0"
+    "qs": "5.1.0"
   },
   "devDependencies": {
     "assertthat": "0.6.0",
-    "body-parser": "1.13.2",
-    "express": "4.13.1",
+    "body-parser": "1.14.0",
+    "express": "4.13.3",
     "grunt": "0.4.5",
     "json-lines": "0.4.1",
-    "tourism": "0.20.2"
+    "tourism": "0.21.0"
   },
   "repository": {
     "type": "git",

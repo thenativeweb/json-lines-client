@@ -13,8 +13,13 @@
     }
   ],
   "main": "lib/jsonLinesClient.js",
+  "browser": {
+    "http": "http-browserify-2/http",
+    "https": "http-browserify-2/https"
+  },
   "dependencies": {
     "defekt": "0.0.2",
+    "http-browserify-2": "0.4.1",
     "newline-json": "0.1.1",
     "qs": "5.1.0"
   },

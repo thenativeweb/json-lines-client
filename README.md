@@ -26,7 +26,7 @@ client({
     foo: 'bar'
   },
   headers: {
-    authoritization: 'Bearer ' + token
+    authorization: 'Bearer ' + token
   }
 }, function (server) {
   server.stream.on('data', function (data) {

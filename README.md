@@ -41,10 +41,10 @@ client({
 
 *Please note that you can not overrid the `content-type` header in this way, as this header is being set internally by json-lines-client.*
 
-If you want to cancel receiving a stream from the client, call the stream's `disconnect` function.
+If you want to cancel receiving a stream from the client, call the server's `disconnect` function.
 
 ```javascript
-server.stream.disconnect();
+server.disconnect();
 ```
 
 Either way, json-lines-client will take care of removing any event listeners from the streams created.

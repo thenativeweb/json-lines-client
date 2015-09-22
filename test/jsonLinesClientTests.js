@@ -141,8 +141,6 @@ suite('jsonLinesClient', function () {
 
       server.stream.once('error', function (err) {
         assert.that(err).is.not.null();
-        assert.that(err.name).is.equalTo('InvalidJson');
-        assert.that(err.message).is.equalTo('Could not parse JSON.');
         done();
       });
     });

@@ -15,6 +15,11 @@ suite('jsonLinesClient', function () {
 
     app.use(bodyParser.json());
 
+    app.post('/no-200', function (req, res) {
+      res.writeHead(500);
+      res.end();
+    });
+
     app.post('/echo-body', jsonLines(function (client) {
       client.once('connect', function () {
         client.send(client.req.body);
@@ -123,6 +128,21 @@ suite('jsonLinesClient', function () {
         assert.that(err).is.not.null();
         assert.that(err.name).is.equalTo('UnexpectedStatusCode');
         assert.that(err.message).is.equalTo('Cannot POST /non-existent\n');
+        done();
+      });
+    });
+  });
+
+  test('emits an error if the server returns a status code not equal to 200.', function (done) {
+    jsonLinesClient({
+      protocol: 'http',
+      host: 'localhost',
+      port: 3000,
+      path: '/no-200'
+    }, function (server) {
+      server.stream.once('error', function (err) {
+        assert.that(err).is.not.null();
+        assert.that(err.statusCode).is.equalTo(500);
         done();
       });
     });

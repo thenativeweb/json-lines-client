@@ -59,7 +59,7 @@ server.stream.once('error', function (err) {
 });
 ```
 
-The most commonly appearing error types are `InvalidJson` and `UnexpectedStatusCode`, so make sure to handle at least these two.
+If the server responded with a status code not equal to `200`, you can get the actual status code using `err.statusCode`.
 
 ### Sending a request body
 

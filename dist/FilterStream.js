@@ -1,7 +1,8 @@
 'use strict';
 
-var stream = require('stream'),
-    util = require('util');
+var stream = require('stream');
+
+var inherits = require('inherits');
 
 var Transform = stream.Transform;
 
@@ -11,7 +12,7 @@ var FilterStream = function FilterStream(predicate) {
   this.predicate = predicate;
 };
 
-util.inherits(FilterStream, Transform);
+inherits(FilterStream, Transform);
 
 /* eslint-disable no-underscore-dangle */
 FilterStream.prototype._transform = function (chunk, encoding, callback) {

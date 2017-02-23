@@ -1,44 +1,44 @@
 'use strict';
 
-var http = require('http');
+const http = require('http');
 
-var assert = require('assertthat'),
-    bodyParser = require('body-parser'),
-    express = require('express'),
-    jsonLines = require('json-lines');
+const assert = require('assertthat'),
+      bodyParser = require('body-parser'),
+      express = require('express'),
+      jsonLines = require('json-lines');
 
-var jsonLinesClient = require('../lib/jsonLinesClient');
+const jsonLinesClient = require('../../lib/jsonLinesClient');
 
-suite('jsonLinesClient', function () {
-  suiteSetup(function () {
-    var app = express();
+suite('jsonLinesClient', () => {
+  suiteSetup(() => {
+    const app = express();
 
     app.use(bodyParser.json());
 
-    app.post('/no-200', function (req, res) {
+    app.post('/no-200', (req, res) => {
       res.writeHead(500);
       res.end();
     });
 
-    app.post('/echo-body', jsonLines(function (client) {
-      client.once('connect', function () {
+    app.post('/echo-body', jsonLines(client => {
+      client.once('connect', () => {
         client.send(client.req.body);
         client.disconnect();
       });
     }));
 
-    app.post('/with-custom-headers', function (req, res) {
+    app.post('/with-custom-headers', (req, res) => {
       res.writeHead(200, {
         'content-type': 'application/json'
       });
-      res.write(JSON.stringify(req.headers) + '\n');
+      res.write(`${JSON.stringify(req.headers)}\n`);
       res.end();
     });
 
-    app.post('/with-query', jsonLines(function (client) {
-      var result = false;
+    app.post('/with-query', jsonLines(client => {
+      let result = false;
 
-      client.once('connect', function () {
+      client.once('connect', () => {
         if (
           (client.req.query.foo === '42') &&
           (client.req.query.bar === 'baz') &&
@@ -48,18 +48,19 @@ suite('jsonLinesClient', function () {
           result = true;
         }
 
-        client.send({ result: result });
+        client.send({ result });
         client.disconnect();
       });
     }));
 
-    app.post('/finite', jsonLines(function (client) {
-      var counter = 0,
-          timer;
+    app.post('/finite', jsonLines(client => {
+      let counter = 0;
 
-      client.once('connect', function () {
-        timer = setInterval(function () {
-          client.send({ counter: counter++ });
+      client.once('connect', () => {
+        const timer = setInterval(() => {
+          client.send({ counter });
+          counter += 1;
+
           if (counter === 10) {
             clearInterval(timer);
             client.disconnect();
@@ -68,63 +69,64 @@ suite('jsonLinesClient', function () {
       });
     }));
 
-    app.post('/infinite', jsonLines(function (client) {
-      var counter = 0,
+    app.post('/infinite', jsonLines(client => {
+      let counter = 0,
           timer;
 
-      client.once('connect', function () {
-        timer = setInterval(function () {
-          client.send({ counter: counter++ });
+      client.once('connect', () => {
+        timer = setInterval(() => {
+          client.send({ counter });
+          counter += 1;
         }, 100);
       });
 
-      client.once('disconnect', function () {
+      client.once('disconnect', () => {
         clearInterval(timer);
       });
     }));
 
-    app.post('/flaky-json', function (req, res) {
+    app.post('/flaky-json', (req, res) => {
       res.writeHead(200, {
         'content-type': 'application/json'
       });
 
-      res.write(JSON.stringify({ foo: 'bar' }) + '\n');
-      res.write(JSON.stringify({ foo: 'baz' }) + '\n');
+      res.write(`${JSON.stringify({ foo: 'bar' })}\n`);
+      res.write(`${JSON.stringify({ foo: 'baz' })}\n`);
       res.write('boom\n');
-      res.write(JSON.stringify({ foo: 'bas' }) + '\n');
+      res.write(`${JSON.stringify({ foo: 'bas' })}\n`);
       res.end();
     });
 
     http.createServer(app).listen(3000);
   });
 
-  test('is a function.', function (done) {
+  test('is a function.', done => {
     assert.that(jsonLinesClient).is.ofType('function');
     done();
   });
 
-  test('emits an error if the request fails.', function (done) {
+  test('emits an error if the request fails.', done => {
     jsonLinesClient({
       protocol: 'http',
       host: 'localhost-xxx',
       port: 3000,
       path: '/'
-    }, function (server) {
-      server.stream.once('error', function (err) {
+    }, server => {
+      server.stream.once('error', err => {
         assert.that(err).is.not.null();
         done();
       });
     });
   });
 
-  test('emits an error if the server returns an error.', function (done) {
+  test('emits an error if the server returns an error.', done => {
     jsonLinesClient({
       protocol: 'http',
       host: 'localhost',
       port: 3000,
       path: '/non-existent'
-    }, function (server) {
-      server.stream.once('error', function (err) {
+    }, server => {
+      server.stream.once('error', err => {
         assert.that(err).is.not.null();
         assert.that(err.name).is.equalTo('UnexpectedStatusCode');
         assert.that(err.message).is.equalTo('Cannot POST /non-existent\n');
@@ -133,14 +135,14 @@ suite('jsonLinesClient', function () {
     });
   });
 
-  test('emits an error if the server returns a status code not equal to 200.', function (done) {
+  test('emits an error if the server returns a status code not equal to 200.', done => {
     jsonLinesClient({
       protocol: 'http',
       host: 'localhost',
       port: 3000,
       path: '/no-200'
-    }, function (server) {
-      server.stream.once('error', function (err) {
+    }, server => {
+      server.stream.once('error', err => {
         assert.that(err).is.not.null();
         assert.that(err.statusCode).is.equalTo(500);
         done();
@@ -148,37 +150,37 @@ suite('jsonLinesClient', function () {
     });
   });
 
-  test('handles parser errors gracefully.', function (done) {
+  test('handles parser errors gracefully.', done => {
     jsonLinesClient({
       protocol: 'http',
       host: 'localhost',
       port: 3000,
       path: '/flaky-json'
-    }, function (server) {
-      server.stream.on('data', function () {
+    }, server => {
+      server.stream.on('data', () => {
         // Intentionally left blank...
       });
 
-      server.stream.once('error', function (err) {
+      server.stream.once('error', err => {
         assert.that(err).is.not.null();
         done();
       });
     });
   });
 
-  test('removes any event listeners on a parser error.', function (done) {
+  test('removes any event listeners on a parser error.', done => {
     jsonLinesClient({
       protocol: 'http',
       host: 'localhost',
       port: 3000,
       path: '/flaky-json'
-    }, function (server) {
-      server.stream.on('data', function () {
+    }, server => {
+      server.stream.on('data', () => {
         // Intentionally left blank...
       });
 
-      server.stream.once('error', function () {
-        process.nextTick(function () {
+      server.stream.once('error', () => {
+        process.nextTick(() => {
           assert.that(server.stream.listeners('data').length).is.equalTo(0);
           assert.that(server.stream.listeners('end').length).is.equalTo(0);
           done();
@@ -187,7 +189,7 @@ suite('jsonLinesClient', function () {
     });
   });
 
-  test('sends a request body.', function (done) {
+  test('sends a request body.', done => {
     jsonLinesClient({
       protocol: 'http',
       host: 'localhost',
@@ -196,53 +198,53 @@ suite('jsonLinesClient', function () {
       body: {
         foo: 'bar'
       }
-    }, function (server) {
-      server.stream.once('data', function (data) {
+    }, server => {
+      server.stream.once('data', data => {
         assert.that(data).is.equalTo({
           foo: 'bar'
         });
       });
 
-      server.stream.once('end', function () {
+      server.stream.once('end', () => {
         done();
       });
     });
   });
 
-  test('parses a finite stream.', function (done) {
+  test('parses a finite stream.', done => {
     jsonLinesClient({
       protocol: 'http',
       host: 'localhost',
       port: 3000,
       path: '/finite'
-    }, function (server) {
-      var resultCount = 0;
+    }, server => {
+      let resultCount = 0;
 
-      server.stream.on('data', function (data) {
+      server.stream.on('data', data => {
         assert.that(data.counter).is.between(0, 9);
-        resultCount++;
+        resultCount += 1;
       });
 
-      server.stream.once('end', function () {
+      server.stream.once('end', () => {
         assert.that(resultCount).is.equalTo(10);
         done();
       });
     });
   });
 
-  test('removes any event listeners when a finite stream ends.', function (done) {
+  test('removes any event listeners when a finite stream ends.', done => {
     jsonLinesClient({
       protocol: 'http',
       host: 'localhost',
       port: 3000,
       path: '/finite'
-    }, function (server) {
-      server.stream.on('data', function () {
+    }, server => {
+      server.stream.on('data', () => {
         // Intentionally left blank...
       });
 
-      server.stream.once('end', function () {
-        process.nextTick(function () {
+      server.stream.once('end', () => {
+        process.nextTick(() => {
           assert.that(server.stream.listeners('data').length).is.equalTo(0);
           assert.that(server.stream.listeners('end').length).is.equalTo(0);
           done();
@@ -251,41 +253,41 @@ suite('jsonLinesClient', function () {
     });
   });
 
-  test('parses an infinite stream.', function (done) {
+  test('parses an infinite stream.', done => {
     jsonLinesClient({
       protocol: 'http',
       host: 'localhost',
       port: 3000,
       path: '/infinite'
-    }, function (server) {
-      server.stream.on('data', function (data) {
+    }, server => {
+      server.stream.on('data', data => {
         assert.that(data.counter).is.between(0, 9);
         if (data.counter === 9) {
           server.disconnect();
         }
       });
 
-      server.stream.once('end', function () {
+      server.stream.once('end', () => {
         done();
       });
     });
   });
 
-  test('removes any event listeners when an infinite stream is aborted.', function (done) {
+  test('removes any event listeners when an infinite stream is aborted.', done => {
     jsonLinesClient({
       protocol: 'http',
       host: 'localhost',
       port: 3000,
       path: '/infinite'
-    }, function (server) {
-      server.stream.on('data', function () {
-        setTimeout(function () {
+    }, server => {
+      server.stream.on('data', () => {
+        setTimeout(() => {
           server.disconnect();
         }, 1000);
       });
 
-      server.stream.once('end', function () {
-        process.nextTick(function () {
+      server.stream.once('end', () => {
+        process.nextTick(() => {
           assert.that(server.stream.listeners('data').length).is.equalTo(0);
           assert.that(server.stream.listeners('end').length).is.equalTo(0);
           done();
@@ -294,7 +296,7 @@ suite('jsonLinesClient', function () {
     });
   });
 
-  test('sends query parameters.', function (done) {
+  test('sends query parameters.', done => {
     jsonLinesClient({
       protocol: 'http',
       host: 'localhost',
@@ -307,18 +309,18 @@ suite('jsonLinesClient', function () {
           key: 'value'
         }
       }
-    }, function (server) {
-      server.stream.once('data', function (data) {
+    }, server => {
+      server.stream.once('data', data => {
         assert.that(data.result).is.true();
       });
 
-      server.stream.once('end', function () {
+      server.stream.once('end', () => {
         done();
       });
     });
   });
 
-  test('sends custom headers.', function (done) {
+  test('sends custom headers.', done => {
     jsonLinesClient({
       protocol: 'http',
       host: 'localhost',
@@ -327,8 +329,8 @@ suite('jsonLinesClient', function () {
       headers: {
         foo: 'bar'
       }
-    }, function (server) {
-      server.stream.once('data', function (data) {
+    }, server => {
+      server.stream.once('data', data => {
         assert.that(data).is.equalTo({
           foo: 'bar',
           'content-type': 'application/json',
@@ -338,7 +340,7 @@ suite('jsonLinesClient', function () {
         });
       });
 
-      server.stream.once('end', function () {
+      server.stream.once('end', () => {
         done();
       });
     });

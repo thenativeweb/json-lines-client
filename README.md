@@ -4,14 +4,16 @@ json-lines-client makes parsing JSON lines streams a breeze.
 
 ## Installation
 
-    $ npm install json-lines-client
+```bash
+$ npm install json-lines-client
+```
 
 ## Quick start
 
 First you need to add a reference to json-lines-client in your application.
 
 ```javascript
-var client = require('json-lines-client');
+const client = require('json-lines-client');
 ```
 
 Then you can connect to a server that sends a JSON lines stream.
@@ -28,12 +30,12 @@ client({
   headers: {
     authorization: 'Bearer ' + token
   }
-}, function (server) {
-  server.stream.on('data', function (data) {
+}, server => {
+  server.stream.on('data', data => {
     // ...
   });
 
-  server.stream.on('end', function () {
+  server.stream.on('end', () => {
     // ...
   });
 });
@@ -54,7 +56,7 @@ Either way, json-lines-client will take care of removing any event listeners fro
 To handle errors subscribe to the `error` event. Then you can use the error's `name` property to find out about the type of the error.
 
 ```javascript
-server.stream.once('error', function (err) {
+server.stream.once('error', err => {
   // ...
 });
 ```
@@ -76,7 +78,7 @@ client({
   body: {
     foo: 'bar'
   }
-}, function (server) {
+}, server => {
   // ...
 });
 ```
@@ -89,14 +91,16 @@ To create to a json-lines enabled server, use the [json-lines](https://www.npmjs
 
 ## Running the build
 
-This module can be built using [Grunt](http://gruntjs.com/). Besides running the tests, this also analyses the code. To run Grunt, go to the folder where you have installed json-lines-client and run `grunt`. You need to have [grunt-cli](https://github.com/gruntjs/grunt-cli) installed.
+To build this module use [roboter](https://www.npmjs.com/package/roboter).
 
-    $ grunt
+```bash
+$ bot
+```
 
 ## License
 
 The MIT License (MIT)
-Copyright (c) 2015 the native web.
+Copyright (c) 2015-2017 the native web.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 

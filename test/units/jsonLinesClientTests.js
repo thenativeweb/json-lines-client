@@ -97,6 +97,26 @@ suite('jsonLinesClient', () => {
       res.end();
     });
 
+    app.post('/large-json', (req, res) => {
+      res.writeHead(200, {
+        'content-type': 'application/json'
+      });
+
+      res.write(`${JSON.stringify({
+        foo: 'bar',
+        baz: 'bas',
+        name: 'Jane Doe',
+        location: 'Somewhere over the rainbow'
+      })}\n`);
+      res.write(`${JSON.stringify({
+        foo: 'another-bar',
+        baz: 'another-bas',
+        name: 'John Doe',
+        location: 'Somewhere else over the rainbow'
+      })}\n`);
+      res.end();
+    });
+
     http.createServer(app).listen(3000);
   });
 
@@ -128,8 +148,8 @@ suite('jsonLinesClient', () => {
     }, server => {
       server.stream.once('error', err => {
         assert.that(err).is.not.null();
-        assert.that(err.name).is.equalTo('UnexpectedStatusCode');
-        assert.that(err.message).is.equalTo('Cannot POST /non-existent\n');
+        assert.that(err.code).is.equalTo('EUNEXPECTEDSTATUSCODE');
+        assert.that(err.message).is.containing('Cannot POST /non-existent');
         done();
       });
     });
@@ -227,6 +247,26 @@ suite('jsonLinesClient', () => {
 
       server.stream.once('end', () => {
         assert.that(resultCount).is.equalTo(10);
+        done();
+      });
+    });
+  });
+
+  test('handles large JSON objects.', done => {
+    jsonLinesClient({
+      protocol: 'http',
+      host: 'localhost',
+      port: 3000,
+      path: '/large-json'
+    }, server => {
+      let resultCount = 0;
+
+      server.stream.on('data', () => {
+        resultCount += 1;
+      });
+
+      server.stream.once('end', () => {
+        assert.that(resultCount).is.equalTo(2);
         done();
       });
     });

@@ -14,17 +14,17 @@
   ],
   "main": "dist/jsonLinesClient.js",
   "dependencies": {
-    "defekt": "0.1.3",
+    "defekt": "0.2.0",
     "newline-json": "0.1.1",
-    "qs": "6.3.0"
+    "qs": "6.5.1"
   },
   "devDependencies": {
-    "assertthat": "0.8.5",
-    "body-parser": "1.16.1",
-    "express": "4.14.1",
+    "assertthat": "0.11.0",
+    "body-parser": "1.18.2",
+    "express": "4.16.2",
     "json-lines": "0.4.3",
-    "roboter": "0.14.6",
-    "roboter-server": "0.14.6"
+    "roboter": "0.15.3",
+    "roboter-server": "0.15.4"
   },
   "repository": {
     "type": "git",

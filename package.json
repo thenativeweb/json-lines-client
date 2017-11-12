@@ -23,7 +23,7 @@
     "body-parser": "1.18.2",
     "express": "4.16.2",
     "json-lines": "0.4.3",
-    "roboter": "0.15.3",
+    "roboter": "0.15.4",
     "roboter-server": "0.15.4"
   },
   "repository": {

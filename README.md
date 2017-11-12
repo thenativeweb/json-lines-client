@@ -4,7 +4,7 @@ json-lines-client makes parsing JSON lines streams a breeze.
 
 ## Installation
 
-```bash
+```shell
 $ npm install json-lines-client
 ```
 
@@ -93,7 +93,7 @@ To create to a json-lines enabled server, use the [json-lines](https://www.npmjs
 
 To build this module use [roboter](https://www.npmjs.com/package/roboter).
 
-```bash
+```shell
 $ bot
 ```
 

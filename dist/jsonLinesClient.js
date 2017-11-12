@@ -49,15 +49,28 @@ var jsonLinesClient = function jsonLinesClient(options, callback) {
     callback({
       stream: filteredStream,
       disconnect: function disconnect() {
-        if (res && res.socket && res.socket.end) {
-          return res.socket.end();
+        // On Node.js, there are destroy functions for the request and for the
+        // response.
+        if (req && req.destroy && res && res.destroy) {
+          req.destroy();
+          res.destroy();
+
+          return;
         }
+
+        // In the browser, there is only a destroy function for the request.
         if (req && req.destroy) {
           return req.destroy();
         }
 
-        // We don't know how to close the connection, but this situation should
-        // definitely be avoided.
+        // If both are not available (for whatever reason), check if you can
+        // destroy the underlying socket.
+        if (res && res.socket && res.socket.end) {
+          return res.socket.end();
+        }
+
+        // If all fails, is apparently is not possible to close the connection.
+        // This should definitely be avoided.
       }
     });
     /* eslint-enable callback-return */

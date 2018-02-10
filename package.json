@@ -21,13 +21,16 @@
     "defekt": "1.0.0",
     "newline-json": "0.1.1",
     "pump": "3.0.0",
-    "r2": "2.0.0"
+    "qs": "6.5.1",
+    "webpack": "3.10.0"
   },
   "devDependencies": {
     "assertthat": "1.0.0",
     "body-parser": "1.18.2",
+    "cors": "2.8.4",
     "express": "4.16.2",
     "json-lines": "1.0.0",
+    "puppeteer": "1.0.0",
     "roboter": "0.15.6",
     "roboter-server": "0.15.6"
   },

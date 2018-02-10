@@ -1,27 +1,29 @@
 'use strict';
 
 const bodyParser = require('body-parser'),
+      cors = require('cors'),
       express = require('express'),
       jsonLines = require('json-lines');
 
-const app = express();
+const getApi = function () {
+  const api = express();
 
-const getApp = function () {
-  app.use(bodyParser.json());
+  api.use(cors());
+  api.use(bodyParser.json());
 
-  app.post('/no-200', (req, res) => {
+  api.post('/no-200', (req, res) => {
     res.writeHead(500);
     res.end();
   });
 
-  app.post('/echo-body', jsonLines(client => {
+  api.post('/echo-body', jsonLines(client => {
     client.once('connect', () => {
       client.send(client.req.body);
       client.disconnect();
     });
   }));
 
-  app.post('/with-custom-headers', (req, res) => {
+  api.post('/with-custom-headers', (req, res) => {
     res.writeHead(200, {
       'content-type': 'application/json'
     });
@@ -29,7 +31,7 @@ const getApp = function () {
     res.end();
   });
 
-  app.post('/with-query', jsonLines(client => {
+  api.post('/with-query', jsonLines(client => {
     let result = false;
 
     client.once('connect', () => {
@@ -47,7 +49,7 @@ const getApp = function () {
     });
   }));
 
-  app.post('/finite', jsonLines(client => {
+  api.post('/finite', jsonLines(client => {
     let counter = 0;
 
     client.once('connect', () => {
@@ -63,7 +65,7 @@ const getApp = function () {
     });
   }));
 
-  app.post('/infinite', jsonLines(client => {
+  api.post('/infinite', jsonLines(client => {
     let counter = 0,
         timer;
 
@@ -79,7 +81,7 @@ const getApp = function () {
     });
   }));
 
-  app.post('/flaky-json', (req, res) => {
+  api.post('/flaky-json', (req, res) => {
     res.writeHead(200, {
       'content-type': 'application/json'
     });
@@ -91,7 +93,7 @@ const getApp = function () {
     res.end();
   });
 
-  app.post('/large-json', (req, res) => {
+  api.post('/large-json', (req, res) => {
     res.writeHead(200, {
       'content-type': 'application/json'
     });
@@ -111,7 +113,7 @@ const getApp = function () {
     res.end();
   });
 
-  return app;
+  return api;
 };
 
-module.exports = getApp;
+module.exports = getApi;

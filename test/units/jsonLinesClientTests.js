@@ -4,14 +4,14 @@ const http = require('http');
 
 const assert = require('assertthat');
 
-const getApp = require('../helpers/getApp'),
+const getApi = require('../helpers/getApi'),
       jsonLinesClient = require('../../lib/jsonLinesClient');
 
 suite('jsonLinesClient', () => {
   suiteSetup(() => {
-    const app = getApp();
+    const api = getApi();
 
-    http.createServer(app).listen(3000);
+    http.createServer(api).listen(3000);
   });
 
   test('is a function.', async () => {
@@ -26,7 +26,7 @@ suite('jsonLinesClient', () => {
         port: 3000,
         path: '/'
       });
-    }).is.throwingAsync(ex => ex.code === 'ENOTFOUND');
+    }).is.throwingAsync(ex => ex.code === 'EREQUESTFAILED');
   });
 
   test('throws an error if the server returns an error.', async () => {
@@ -37,7 +37,7 @@ suite('jsonLinesClient', () => {
         port: 3000,
         path: '/non-existent'
       });
-    }).is.throwingAsync(ex => ex.code === 'EUNEXPECTEDSTATUSCODE');
+    }).is.throwingAsync(ex => ex.code === 'ESTATUSCODEUNEXPECTED');
   });
 
   test('throws an error if the server returns a status code not equal to 200.', async () => {
@@ -48,7 +48,7 @@ suite('jsonLinesClient', () => {
         port: 3000,
         path: '/no-200'
       });
-    }).is.throwingAsync(ex => ex.code === 'EUNEXPECTEDSTATUSCODE');
+    }).is.throwingAsync(ex => ex.code === 'ESTATUSCODEUNEXPECTED');
   });
 
   test('handles parser errors gracefully.', done => {

@@ -6,7 +6,13 @@ roboter.
   workOn('server').
   equipWith(task => {
     task('universal/analyze', {
-      src: [ '**/*.js', '!node_modules/**/*.js', '!coverage/**/*.js', '!dist/**/*.js' ]
+      src: [
+        '**/*.js',
+        '!node_modules/**/*.js',
+        '!coverage/**/*.js',
+        '!dist/**/*.js',
+        '!test/integration/frontend/jsonLinesClient.browser.js'
+      ]
     });
 
     task('universal/release', {

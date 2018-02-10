@@ -2,6 +2,6 @@
 
 var defekt = require('defekt');
 
-var errors = defekt(['UnexpectedStatusCode']);
+var errors = defekt(['RequestFailed', 'StatusCodeUnexpected']);
 
 module.exports = errors;

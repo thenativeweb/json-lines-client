@@ -1,5 +1,15 @@
 'use strict';
 
+var _stringify = require('babel-runtime/core-js/json/stringify');
+
+var _stringify2 = _interopRequireDefault(_stringify);
+
+var _promise = require('babel-runtime/core-js/promise');
+
+var _promise2 = _interopRequireDefault(_promise);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 var errors = require('./errors');
 
 var request = function request(_ref, _ref2) {
@@ -18,7 +28,7 @@ var request = function request(_ref, _ref2) {
   var qs = require('qs');
   /* eslint-enable global-require */
 
-  return new Promise(function (resolve, reject) {
+  return new _promise2.default(function (resolve, reject) {
     var wire = protocol === 'http' ? http : https;
 
     var req = wire.request({
@@ -52,7 +62,7 @@ var request = function request(_ref, _ref2) {
     req.on('finish', onReqFinish);
 
     if (json) {
-      req.write(JSON.stringify(json));
+      req.write((0, _stringify2.default)(json));
     }
     req.end();
   });

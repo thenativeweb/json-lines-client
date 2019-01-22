@@ -5,7 +5,7 @@ const http = require('http');
 const assert = require('assertthat');
 
 const getApi = require('../helpers/getApi'),
-      jsonLinesClient = require('../../lib/jsonLinesClient');
+      jsonLinesClient = require('../../src/jsonLinesClient');
 
 suite('jsonLinesClient', () => {
   suiteSetup(() => {

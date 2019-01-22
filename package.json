@@ -19,21 +19,20 @@
   "main": "dist/jsonLinesClient.js",
   "dependencies": {
     "babel-runtime": "6.26.0",
-    "defekt": "1.0.0",
+    "defekt": "2.0.1",
     "newline-json": "0.1.1",
     "pump": "3.0.0",
-    "qs": "6.5.1",
+    "qs": "6.6.0",
     "webpack": "3.11.0"
   },
   "devDependencies": {
-    "assertthat": "1.0.0",
-    "body-parser": "1.18.2",
-    "cors": "2.8.4",
-    "express": "4.16.2",
+    "assertthat": "2.0.1",
+    "body-parser": "1.18.3",
+    "cors": "2.8.5",
+    "express": "4.16.4",
     "json-lines": "1.0.0",
-    "puppeteer": "1.0.0",
-    "roboter": "0.16.0",
-    "roboter-server": "0.16.0"
+    "puppeteer": "1.11.0",
+    "roboter": "3.0.4"
   },
   "repository": {
     "type": "git",

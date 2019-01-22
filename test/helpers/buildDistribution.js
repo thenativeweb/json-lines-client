@@ -8,7 +8,7 @@ const buildDistribution = function () {
   return new Promise((resolve, reject) => {
     const compiler = webpack({
       bail: true,
-      entry: path.join(__dirname, '..', '..', 'lib', 'jsonLinesClient.js'),
+      entry: path.join(__dirname, '..', '..', 'src', 'jsonLinesClient.js'),
       output: {
         path: path.resolve(__dirname, '..', 'integration', 'frontend'),
         filename: 'jsonLinesClient.browser.js',

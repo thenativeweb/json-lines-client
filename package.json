@@ -29,7 +29,7 @@
     "assertthat": "2.0.1",
     "body-parser": "1.18.3",
     "cors": "2.8.5",
-    "express": "4.16.4",
+    "express": "4.17.3",
     "json-lines": "1.0.0",
     "puppeteer": "1.11.0",
     "roboter": "3.0.4"

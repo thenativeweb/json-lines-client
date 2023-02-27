@@ -32,7 +32,7 @@
     "express": "4.16.4",
     "json-lines": "1.0.0",
     "puppeteer": "1.11.0",
-    "roboter": "3.0.4"
+    "roboter": "13.2.1"
   },
   "repository": {
     "type": "git",
